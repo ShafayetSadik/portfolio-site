@@ -1,0 +1,17 @@
+---
+import Section from './Section.astro';
+import { skills } from '../data/cv';
+---
+
+<Section id="skills" index="05" title="Skills">
+  <div data-reveal-group class="grid gap-x-10 gap-y-10 sm:grid-cols-2">
+    {skills.map((s) => (
+      <div data-reveal-item>
+        <h3 class="text-sm font-semibold tracking-tight">{s.group}</h3>
+        <ul class="mt-3 flex flex-wrap gap-1.5">
+          {s.items.map((item) => <li class="chip">{item}</li>)}
+        </ul>
+      </div>
+    ))}
+  </div>
+</Section>

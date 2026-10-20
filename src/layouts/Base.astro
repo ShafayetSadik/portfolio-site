@@ -1,0 +1,64 @@
+---
+import '../styles/global.css';
+import { profile } from '../data/cv';
+import { asset } from '../lib/rich';
+
+const title = `${profile.name} — ${profile.role}`;
+const description = profile.tagline;
+const canonical = new URL(import.meta.env.BASE_URL, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={profile.name} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={asset('favicon.svg')} type="image/svg+xml" />
+    <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b0c0d" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+
+    <!-- Set theme and motion flags before first paint to avoid flashes. -->
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        var stored = null;
+        try { stored = localStorage.getItem('theme'); } catch (e) {}
+        var dark = stored ? stored === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        d.dataset.theme = dark ? 'dark' : 'light';
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('motion');
+      })();
+    </script>
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: profile.name,
+      jobTitle: profile.role,
+      worksFor: { '@type': 'Organization', name: profile.company },
+      alumniOf: { '@type': 'CollegeOrUniversity', name: 'Islamic University of Technology' },
+      email: `mailto:${profile.email}`,
+      url: canonical,
+      sameAs: [profile.github, profile.linkedin],
+    })} />
+  </head>
+  <body class="min-h-dvh">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-bg">
+      Skip to content
+    </a>
+    <slot />
+    <script>
+      import '../scripts/ui';
+      import '../scripts/motion';
+    </script>
+  </body>
+</html>

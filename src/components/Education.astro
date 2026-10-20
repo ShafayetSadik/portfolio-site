@@ -1,0 +1,67 @@
+---
+import Section from './Section.astro';
+import Icon from './Icon.astro';
+import { education, ielts } from '../data/cv';
+---
+
+<Section id="education" index="06" title="Education">
+  <div class="grid gap-4 lg:grid-cols-[1fr_17rem]">
+    <article data-reveal class="card p-6 md:p-8">
+      <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+        <h3 class="text-lg font-semibold tracking-tight">{education.school}</h3>
+        <p class="shrink-0 font-mono text-xs text-faint">{education.date}</p>
+      </div>
+      <p class="mt-1 text-muted">{education.degree}</p>
+
+      <div class="mt-5 inline-flex items-baseline gap-2 rounded-lg bg-surface-2 px-3 py-1.5">
+        <span class="label">CGPA</span>
+        <span class="font-semibold tabular-nums">{education.cgpa}</span>
+      </div>
+
+      <div class="mt-7 border-t border-line pt-6">
+        <p class="label">Thesis</p>
+        <a
+          href={education.thesis.url}
+          target="_blank"
+          rel="noopener"
+          class="group mt-2 block font-medium leading-snug tracking-tight transition-colors hover:text-accent"
+        >
+          {education.thesis.title}
+          <Icon name="arrow-up-right" size={14} class="ml-0.5 inline -translate-y-px text-faint transition-colors group-hover:text-accent" />
+        </a>
+        <p class="mt-3 text-sm leading-relaxed text-muted">{education.thesis.summary}</p>
+      </div>
+    </article>
+
+    <article data-reveal class="card p-6 md:p-7">
+      <p class="label">English proficiency</p>
+      <h3 class="mt-2 font-semibold tracking-tight">{ielts.test}</h3>
+      <p class="text-sm text-muted">{ielts.body}</p>
+
+      <p class="mt-5 flex items-baseline gap-1.5">
+        <span class="text-4xl font-semibold tracking-tight tabular-nums">
+          <span data-count={ielts.overall} data-decimals="1">{ielts.overall.toFixed(1)}</span>
+        </span>
+        <span class="text-sm text-faint">/ 9.0 overall</span>
+      </p>
+
+      <ul class="mt-6 space-y-3">
+        {ielts.bands.map((b) => (
+          <li>
+            <div class="flex justify-between text-xs">
+              <span class="text-muted">{b.skill}</span>
+              <span class="font-mono tabular-nums">{b.score.toFixed(1)}</span>
+            </div>
+            <div class="mt-1.5 h-1 overflow-hidden rounded-full bg-surface-2">
+              <div
+                data-bar
+                class="h-full origin-left rounded-full bg-accent"
+                style={`width:${(b.score / 9) * 100}%`}
+              ></div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </article>
+  </div>
+</Section>

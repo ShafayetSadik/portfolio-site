@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+.DS_Store
+Thumbs.db
+*.log
+.shots/
+
+# Local source material (contains referee contact details)
+latexcode.txt
+shafayetsadik_CV_Academic.pdf
+PLAN.md
+.claude/

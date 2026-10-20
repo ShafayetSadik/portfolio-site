@@ -1,0 +1,37 @@
+---
+import Section from './Section.astro';
+import { leadership, awards } from '../data/cv';
+---
+
+<Section id="leadership" index="07" title="Leadership & Awards">
+  <div class="space-y-12">
+    <div>
+      <p data-reveal class="label">Competitions</p>
+      <ul data-reveal-group class="mt-4 grid gap-4 sm:grid-cols-2">
+        {awards.map((a) => (
+          <li data-reveal-item class="card p-5">
+            <p class="font-semibold tracking-tight text-accent">{a.result}</p>
+            <p class="mt-1.5 font-medium leading-snug">{a.event}</p>
+            <p class="mt-1 text-sm text-muted">{a.team} · {a.place}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div>
+      <p data-reveal class="label">Leadership</p>
+      <ul data-reveal-group class="mt-4 divide-y divide-line border-y border-line">
+        {leadership.map((l) => (
+          <li data-reveal-item class="grid gap-1 py-4 sm:grid-cols-[1fr_auto] sm:items-baseline sm:gap-6">
+            <p>
+              <span class="font-medium">{l.role}</span>
+              <span class="text-muted"> · {l.org}</span>
+              {l.note && <span class="text-faint"> ({l.note})</span>}
+            </p>
+            <p class="font-mono text-xs text-faint">{l.period}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</Section>

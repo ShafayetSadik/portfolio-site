@@ -1,0 +1,125 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { profile, highlights } from '../data/cv';
+import { asset } from '../lib/rich';
+
+// Headshot is optional: put the file in src/assets/ and set profile.photo.
+const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/*.{jpg,jpeg,png,webp,avif}');
+const photoKey = profile.photo ? `../assets/${profile.photo}` : null;
+const photo = photoKey && photos[photoKey] ? (await photos[photoKey]()).default : null;
+
+const [first, ...rest] = profile.name.split(' ');
+---
+
+<section id="top" class="relative overflow-hidden pt-28 md:pt-36">
+  <div
+    aria-hidden="true"
+    class="hero-grid pointer-events-none absolute inset-0 -z-10"
+  ></div>
+
+  <div class="container-page grid items-center gap-12 lg:grid-cols-[1fr_20rem] lg:gap-16">
+    <div>
+      <p data-hero-item class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-[0.8125rem] text-muted">
+        <span class="relative flex size-2">
+          <span class="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60 motion-reduce:hidden"></span>
+          <span class="relative inline-flex size-2 rounded-full bg-accent"></span>
+        </span>
+        {profile.role} at {profile.company}
+      </p>
+
+      <h1 data-hero-name class="mt-6 text-[clamp(2.6rem,8vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.035em]">
+        <span class="block">{first}</span>
+        <span class="block text-muted">{rest.join(' ')}</span>
+      </h1>
+
+      <p data-hero-item class="mt-7 max-w-xl text-lg leading-relaxed text-muted md:text-xl">
+        {profile.tagline} I bridge hardware and software, from PCBs and flight controllers to ML pipelines and digital twin viewers.
+      </p>
+
+      <div data-hero-item class="mt-9 flex flex-wrap items-center gap-3">
+        <a href={`mailto:${profile.email}`} class="btn btn-primary">
+          <Icon name="mail" size={17} /> Get in touch
+        </a>
+        <a href={asset(profile.cvFile)} class="btn btn-ghost" download>
+          <Icon name="download" size={17} /> Download CV
+        </a>
+        <span class="mx-1 hidden h-6 w-px bg-line sm:block" aria-hidden="true"></span>
+        <a href={profile.github} class="icon-btn" aria-label="GitHub profile" target="_blank" rel="noopener">
+          <Icon name="github" />
+        </a>
+        <a href={profile.linkedin} class="icon-btn" aria-label="LinkedIn profile" target="_blank" rel="noopener">
+          <Icon name="linkedin" />
+        </a>
+      </div>
+    </div>
+
+    <div
+      data-hero-portrait
+      class:list={['relative mx-auto w-full max-w-[17rem] lg:max-w-none', !photo && 'hidden lg:block']}
+    >
+      <div class="card relative aspect-[4/5] overflow-hidden">
+        {photo ? (
+          <Image
+            src={photo}
+            alt={`Portrait of ${profile.name}`}
+            widths={[320, 480, 640]}
+            sizes="(min-width: 1024px) 20rem, 17rem"
+            loading="eager"
+            fetchpriority="high"
+            class="size-full object-cover"
+          />
+        ) : (
+          <div class="portrait-placeholder grid size-full place-items-center">
+            <span class="font-mono text-6xl font-medium tracking-tight text-faint">{profile.initials}</span>
+          </div>
+        )}
+      </div>
+      <div class="absolute -bottom-4 -left-4 hidden rounded-xl border border-line bg-surface px-3.5 py-2.5 text-xs shadow-sm sm:block">
+        <p class="label !text-[0.65rem]">Education</p>
+        <p class="mt-0.5 font-medium">IUT · B.Sc. EEE ’25</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-page mt-20 md:mt-24">
+    <dl data-reveal-group class="grid grid-cols-2 border-y border-line md:grid-cols-4">
+      {highlights.map((h, i) => (
+        <div
+          data-reveal-item
+          class:list={[
+            'px-1 py-7 md:px-6',
+            i % 2 === 1 && 'border-l border-line pl-5 md:pl-6',
+            i >= 2 && 'border-t border-line md:border-t-0',
+            i === 2 && 'md:border-l',
+          ]}
+        >
+          <dt class="order-2 mt-1.5 text-sm text-muted">{h.label}</dt>
+          <dd class="text-3xl font-semibold tracking-tight tabular-nums md:text-4xl">
+            {h.prefix}<span data-count={h.value} data-decimals={h.decimals}>{h.value.toFixed(h.decimals)}</span>{h.suffix}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  .hero-grid {
+    background-image:
+      linear-gradient(to right, var(--grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+  }
+  .portrait-placeholder {
+    background:
+      radial-gradient(circle at 30% 20%, var(--accent-soft), transparent 60%),
+      repeating-linear-gradient(135deg, var(--surface-2) 0 1px, transparent 1px 12px),
+      var(--surface);
+  }
+  dl > div {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+</style>

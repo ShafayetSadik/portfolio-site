@@ -1,0 +1,41 @@
+---
+import Section from './Section.astro';
+import { experience } from '../data/cv';
+import { rich } from '../lib/rich';
+---
+
+<Section id="experience" index="02" title="Experience">
+  <ol class="relative" data-timeline>
+    <!-- Track + progress line; the progress line is drawn by motion.ts as you scroll. -->
+    <span aria-hidden="true" class="absolute bottom-2 left-[5px] top-2 w-px bg-line"></span>
+    <span aria-hidden="true" data-timeline-progress class="absolute bottom-2 left-[5px] top-2 w-px origin-top bg-accent"></span>
+
+    {experience.map((job) => (
+      <li data-reveal class="relative pb-14 pl-9 last:pb-0">
+        <span
+          aria-hidden="true"
+          class:list={[
+            'absolute left-0 top-1.5 size-[11px] rounded-full border-2 border-bg',
+            job.current ? 'bg-accent ring-4 ring-accent-soft' : 'bg-faint',
+          ]}
+        ></span>
+
+        <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+          <h3 class="text-lg font-semibold tracking-tight">
+            {job.role}
+            <span class="font-normal text-muted"> · {job.company}</span>
+          </h3>
+          <p class="shrink-0 font-mono text-xs text-faint">{job.period}</p>
+        </div>
+
+        <ul data-reveal-group class="mt-5 space-y-3 text-[0.9675rem] leading-relaxed text-muted">
+          {job.points.map((p) => (
+            <li data-reveal-item class="relative pl-5 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-2.5 before:bg-faint">
+              <Fragment set:html={rich(p)} />
+            </li>
+          ))}
+        </ul>
+      </li>
+    ))}
+  </ol>
+</Section>

@@ -1,0 +1,74 @@
+---
+import Icon from './Icon.astro';
+import { nav, profile } from '../data/cv';
+---
+
+<header
+  id="site-header"
+  class="fixed inset-x-0 top-0 z-50 border-b border-transparent transition-[background-color,border-color] duration-300 data-[scrolled=true]:border-line data-[scrolled=true]:bg-bg/80 data-[scrolled=true]:backdrop-blur-md"
+>
+  <div class="container-page flex h-16 items-center justify-between gap-4">
+    <a href="#top" class="group flex items-center gap-2.5 text-[0.9375rem] font-semibold tracking-tight">
+      <span aria-hidden="true" class="grid size-8 place-items-center rounded-lg bg-ink font-mono text-xs text-bg transition-colors group-hover:bg-accent group-hover:text-accent-ink">
+        {profile.initials}
+      </span>
+      <span class="sr-only sm:not-sr-only">{profile.name}</span>
+    </a>
+
+    <nav aria-label="Sections" class="hidden lg:block">
+      <ul id="nav-links" class="relative flex items-center gap-1 text-sm text-muted">
+        <span
+          id="nav-indicator"
+          aria-hidden="true"
+          class="pointer-events-none absolute left-0 top-0 h-full rounded-full bg-surface-2 opacity-0"
+        ></span>
+        {nav.map((item) => (
+          <li class="relative">
+            <a
+              href={`#${item.id}`}
+              data-nav-link={item.id}
+              class="block rounded-full px-3 py-1.5 transition-colors hover:text-ink aria-[current=true]:text-ink"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button type="button" data-theme-toggle class="icon-btn size-10" aria-label="Toggle color theme">
+        <Icon name="sun" class="hidden dark:block" />
+        <Icon name="moon" class="block dark:hidden" />
+      </button>
+      <button
+        type="button"
+        id="menu-button"
+        class="icon-btn size-10 lg:hidden"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <Icon name="menu" class="menu-open-icon" />
+        <Icon name="close" class="menu-close-icon hidden" />
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden border-t border-line bg-bg/95 backdrop-blur-md lg:hidden">
+    <ul class="container-page flex flex-col py-3">
+      {nav.map((item) => (
+        <li>
+          <a
+            href={`#${item.id}`}
+            data-mobile-link
+            class="flex items-center justify-between border-b border-line py-3.5 text-lg tracking-tight last:border-0"
+          >
+            {item.label}
+            <Icon name="arrow-up-right" size={16} class="text-faint" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</header>
