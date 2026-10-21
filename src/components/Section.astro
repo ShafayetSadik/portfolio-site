@@ -1,5 +1,6 @@
 ---
 // Shared section shell: mono index label in a left rail on desktop, content on the right.
+// On phones the index and title share one line to save vertical space.
 interface Props {
   id: string;
   index: string;
@@ -9,13 +10,15 @@ interface Props {
 const { id, index, title, intro } = Astro.props;
 ---
 
-<section id={id} class="border-t border-line py-20 md:py-28" aria-labelledby={`${id}-title`}>
-  <div class="container-page grid gap-10 md:grid-cols-[13rem_1fr] md:gap-12">
+<section id={id} class="border-t border-line py-14 md:py-28" aria-labelledby={`${id}-title`}>
+  <div class="container-page grid gap-7 md:grid-cols-[13rem_1fr] md:gap-12">
     <div data-reveal>
       <div class="md:sticky md:top-24">
-        <p class="label">{index}</p>
-        <h2 id={`${id}-title`} class="mt-2 text-2xl font-semibold tracking-tight md:text-[1.65rem]">{title}</h2>
-        {intro && <p class="mt-3 max-w-xs text-sm leading-relaxed text-muted">{intro}</p>}
+        <div class="flex items-baseline gap-3 md:block">
+          <p class="label">{index}</p>
+          <h2 id={`${id}-title`} class="text-2xl font-semibold tracking-tight md:mt-2 md:text-[1.65rem]">{title}</h2>
+        </div>
+        {intro && <p class="mt-2 max-w-md text-sm leading-relaxed text-muted md:mt-3 md:max-w-xs">{intro}</p>}
       </div>
     </div>
     <div class="min-w-0">

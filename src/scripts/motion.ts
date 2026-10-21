@@ -2,6 +2,11 @@ import { animate, onScroll, splitText, stagger, createTimeline } from 'animejs';
 
 const root = document.documentElement;
 const EASE = 'outExpo';
+// Phones get shorter, smaller, quicker motion so long scrolls don't feel busy.
+const phone = matchMedia('(max-width: 767.98px)').matches;
+const SHIFT = phone ? 12 : 22;
+const DUR = phone ? 650 : 900;
+const STEP = phone ? 40 : 70;
 
 function initHero() {
   const name = document.querySelector<HTMLElement>('[data-hero-name]');
@@ -37,7 +42,7 @@ const seen = new IntersectionObserver(
       pending.delete(entry.target);
     }
   },
-  { rootMargin: '100000px 0px -60px 0px' },
+  { rootMargin: phone ? '100000px 0px -30px 0px' : '100000px 0px -60px 0px' },
 );
 function whenSeen(el: Element, play: () => void) {
   pending.set(el, play);
@@ -47,13 +52,13 @@ function whenSeen(el: Element, play: () => void) {
 // Fade/slide sections in as they come into view.
 function initReveals() {
   document.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => {
-    whenSeen(el, () => animate(el, { opacity: [0, 1], y: [22, 0], duration: 900, ease: EASE }));
+    whenSeen(el, () => animate(el, { opacity: [0, 1], y: [SHIFT, 0], duration: DUR, ease: EASE }));
   });
 
   document.querySelectorAll<HTMLElement>('[data-reveal-group]').forEach((group) => {
     const items = group.querySelectorAll<HTMLElement>('[data-reveal-item]');
     whenSeen(group, () =>
-      animate(items, { opacity: [0, 1], y: [18, 0], duration: 800, delay: stagger(70), ease: EASE }),
+      animate(items, { opacity: [0, 1], y: [SHIFT * 0.8, 0], duration: DUR - 100, delay: stagger(STEP), ease: EASE }),
     );
   });
 }

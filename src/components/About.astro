@@ -4,15 +4,15 @@ import { profile, focusAreas } from '../data/cv';
 ---
 
 <Section id="about" index="01" title="About">
-  <p data-reveal class="max-w-2xl text-xl leading-relaxed tracking-tight text-ink md:text-2xl md:leading-snug">
+  <p data-reveal class="max-w-2xl text-lg leading-relaxed tracking-tight text-ink md:text-2xl md:leading-snug">
     {profile.summary}
   </p>
 
-  <div class="mt-12">
+  <div class="mt-8 md:mt-12">
     <p data-reveal class="label">Focus areas</p>
     <ul data-reveal-group class="mt-4 flex flex-wrap gap-2">
       {focusAreas.map((area) => (
-        <li data-reveal-item class="chip !px-3.5 !py-1.5 !text-sm">{area}</li>
+        <li data-reveal-item class="chip md:!px-3.5 md:!py-1.5 md:!text-sm">{area}</li>
       ))}
     </ul>
   </div>

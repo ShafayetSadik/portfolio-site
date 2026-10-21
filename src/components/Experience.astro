@@ -2,6 +2,9 @@
 import Section from './Section.astro';
 import { experience } from '../data/cv';
 import { rich } from '../lib/rich';
+
+// On phones only the first few bullets show; a button reveals the rest (see ui.ts).
+const VISIBLE_ON_PHONE = 4;
 ---
 
 <Section id="experience" index="02" title="Experience">
@@ -10,8 +13,8 @@ import { rich } from '../lib/rich';
     <span aria-hidden="true" class="absolute bottom-2 left-[5px] top-2 w-px bg-line"></span>
     <span aria-hidden="true" data-timeline-progress class="absolute bottom-2 left-[5px] top-2 w-px origin-top bg-accent"></span>
 
-    {experience.map((job) => (
-      <li data-reveal class="relative pb-14 pl-9 last:pb-0">
+    {experience.map((job, i) => (
+      <li data-reveal class="relative pb-10 pl-7 last:pb-0 md:pb-14 md:pl-9">
         <span
           aria-hidden="true"
           class:list={[
@@ -28,13 +31,34 @@ import { rich } from '../lib/rich';
           <p class="shrink-0 font-mono text-xs text-faint">{job.period}</p>
         </div>
 
-        <ul data-reveal-group class="mt-5 space-y-3 text-[0.9675rem] leading-relaxed text-muted">
-          {job.points.map((p) => (
-            <li data-reveal-item class="relative pl-5 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-2.5 before:bg-faint">
+        <ul
+          data-reveal-group
+          data-collapsed={job.points.length > VISIBLE_ON_PHONE ? '' : undefined}
+          id={`job-${i}-points`}
+          class="mt-4 space-y-2.5 text-[0.9375rem] leading-relaxed text-muted md:mt-5 md:space-y-3 md:text-[0.9675rem]"
+        >
+          {job.points.map((p, j) => (
+            <li
+              data-reveal-item
+              data-extra={j >= VISIBLE_ON_PHONE ? '' : undefined}
+              class="relative pl-5 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-2.5 before:bg-faint"
+            >
               <Fragment set:html={rich(p)} />
             </li>
           ))}
         </ul>
+        {job.points.length > VISIBLE_ON_PHONE && (
+          <button
+            type="button"
+            data-expand={`job-${i}-points`}
+            aria-expanded="false"
+            aria-controls={`job-${i}-points`}
+            class="mt-4 hidden items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2 text-sm font-medium active:scale-[0.97]"
+          >
+            Show all {job.points.length}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </button>
+        )}
       </li>
     ))}
   </ol>

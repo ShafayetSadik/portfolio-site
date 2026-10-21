@@ -4,14 +4,15 @@ import { leadership, awards } from '../data/cv';
 ---
 
 <Section id="leadership" index="07" title="Leadership & Awards">
-  <div class="space-y-12">
+  <div class="space-y-10 md:space-y-12">
     <div>
       <p data-reveal class="label">Competitions</p>
-      <ul data-reveal-group class="mt-4 grid gap-4 sm:grid-cols-2">
+      <!-- Phones: compact divided rows. sm and up: 2-column cards. -->
+      <ul data-reveal-group class="mt-3 divide-y divide-line border-y border-line sm:mt-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:divide-y-0 sm:border-0">
         {awards.map((a) => (
-          <li data-reveal-item class="card p-5">
-            <p class="font-semibold tracking-tight text-accent">{a.result}</p>
-            <p class="mt-1.5 font-medium leading-snug">{a.event}</p>
+          <li data-reveal-item class="py-4 sm:rounded-2xl sm:border sm:border-line sm:bg-surface sm:p-5">
+            <p class="text-sm font-semibold tracking-tight text-accent sm:text-base">{a.result}</p>
+            <p class="mt-1 font-medium leading-snug sm:mt-1.5">{a.event}</p>
             <p class="mt-1 text-sm text-muted">{a.team} · {a.place}</p>
           </li>
         ))}
@@ -20,7 +21,7 @@ import { leadership, awards } from '../data/cv';
 
     <div>
       <p data-reveal class="label">Leadership</p>
-      <ul data-reveal-group class="mt-4 divide-y divide-line border-y border-line">
+      <ul data-reveal-group class="mt-3 divide-y divide-line border-y border-line sm:mt-4">
         {leadership.map((l) => (
           <li data-reveal-item class="grid gap-1 py-4 sm:grid-cols-[1fr_auto] sm:items-baseline sm:gap-6">
             <p>

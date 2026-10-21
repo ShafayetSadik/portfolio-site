@@ -37,14 +37,17 @@ function setMenu(open: boolean) {
   menuBtn.querySelector('.menu-open-icon')?.classList.toggle('hidden', open);
   menuBtn.querySelector('.menu-close-icon')?.classList.toggle('hidden', !open);
   menu.classList.toggle('hidden', !open);
+  menu.classList.toggle('flex', open);
+  // Lock page scroll behind the full-screen sheet.
+  root.style.overflow = open ? 'hidden' : '';
   if (open && header) header.dataset.scrolled = 'true';
   if (!open) onScroll();
   if (open && !reduced) {
     animate(menu.querySelectorAll('li'), {
       opacity: [0, 1],
-      x: [-12, 0],
-      delay: (_, i) => i * 35,
-      duration: 380,
+      y: [16, 0],
+      delay: (_, i) => i * 30,
+      duration: 420,
       ease: 'outQuart',
     });
   }
@@ -53,7 +56,7 @@ function setMenu(open: boolean) {
 menuBtn?.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
 menu?.querySelectorAll('[data-mobile-link]').forEach((a) => a.addEventListener('click', () => setMenu(false)));
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') setMenu(false);
+  if (e.key === 'Escape' && menuBtn?.getAttribute('aria-expanded') === 'true') setMenu(false);
 });
 matchMedia('(min-width: 1024px)').addEventListener('change', (e) => {
   if (e.matches) setMenu(false);
@@ -114,3 +117,79 @@ window.addEventListener('resize', () => {
   activeId = null;
   setActive(current);
 });
+
+// "Show all" for long experience lists on phones ----------------------------
+document.querySelectorAll<HTMLButtonElement>('[data-expand]').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const list = document.getElementById(btn.dataset.expand!);
+    if (!list) return;
+    list.dataset.expanded = '';
+    btn.hidden = true;
+    btn.setAttribute('aria-expanded', 'true');
+    const extras = list.querySelectorAll<HTMLElement>('[data-extra]');
+    extras[0]?.setAttribute('tabindex', '-1');
+    extras[0]?.focus({ preventScroll: true });
+    if (!reduced) {
+      animate(extras, { opacity: [0, 1], y: [10, 0], delay: (_, i) => i * 50, duration: 450, ease: 'outQuart' });
+    }
+  });
+});
+
+// Projects carousel controls (phones) ---------------------------------------
+const track = document.querySelector<HTMLElement>('[data-carousel]');
+if (track) {
+  const slides = [...track.querySelectorAll<HTMLElement>('[data-slide]')];
+  const current = document.querySelector<HTMLElement>('[data-carousel-current]');
+  const bar = document.querySelector<HTMLElement>('[data-carousel-bar]');
+  const prev = document.querySelector<HTMLButtonElement>('[data-carousel-prev]');
+  const next = document.querySelector<HTMLButtonElement>('[data-carousel-next]');
+  let index = 0;
+
+  const render = () => {
+    if (current) current.textContent = String(index + 1).padStart(2, '0');
+    if (bar) bar.style.transform = `scaleX(${(index + 1) / slides.length})`;
+    if (prev) prev.disabled = index === 0;
+    if (next) next.disabled = index === slides.length - 1;
+  };
+
+  // The slide that is mostly in view is the current one.
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) index = slides.indexOf(e.target as HTMLElement);
+      }
+      render();
+    },
+    { root: track, threshold: 0.6 },
+  );
+  slides.forEach((s) => io.observe(s));
+
+  const go = (to: number) => {
+    const target = slides[Math.max(0, Math.min(slides.length - 1, to))];
+    if (!target) return;
+    track.scrollTo({ left: target.offsetLeft - track.offsetLeft - parseFloat(getComputedStyle(track).paddingLeft), behavior: reduced ? 'auto' : 'smooth' });
+  };
+  prev?.addEventListener('click', () => go(index - 1));
+  next?.addEventListener('click', () => go(index + 1));
+  render();
+}
+
+// Floating back-to-top button (phones) --------------------------------------
+const toTop = document.getElementById('to-top');
+const hero = document.getElementById('top');
+if (toTop && hero) {
+  let shown = false;
+  new IntersectionObserver(([e]) => {
+    const show = !e.isIntersecting;
+    if (show === shown) return;
+    shown = show;
+    if (show) {
+      toTop.dataset.show = '';
+      if (!reduced) animate(toTop, { opacity: [0, 1], scale: [0.8, 1], duration: 300, ease: 'outBack' });
+    } else if (reduced) {
+      delete toTop.dataset.show;
+    } else {
+      animate(toTop, { opacity: 0, scale: 0.8, duration: 200, ease: 'inQuad', onComplete: () => { if (!shown) delete toTop.dataset.show; } });
+    }
+  }).observe(hero);
+}

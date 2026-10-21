@@ -31,10 +31,10 @@ export const focusAreas = [
 ];
 
 export const highlights = [
-  { value: 4, decimals: 0, prefix: '', suffix: '', label: 'Peer-reviewed publications' },
-  { value: 100, decimals: 0, prefix: '~', suffix: ' km²', label: 'Mapped by agricultural drone survey' },
+  { value: 4, decimals: 0, prefix: '', suffix: '', label: 'Peer-reviewed papers' },
+  { value: 100, decimals: 0, prefix: '~', suffix: ' km²', label: 'Mapped by drone' },
   { value: 8, decimals: 0, prefix: '', suffix: '', label: 'Engineering projects' },
-  { value: 3.64, decimals: 2, prefix: '', suffix: '', label: 'CGPA, B.Sc. in EEE' },
+  { value: 3.64, decimals: 2, prefix: '', suffix: '', label: 'CGPA · B.Sc. EEE' },
 ];
 
 export type Job = {

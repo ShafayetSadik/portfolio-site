@@ -53,8 +53,14 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 5rem;
+    scroll-padding-top: 4.5rem;
     -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (min-width: 768px) {
+    html {
+      scroll-padding-top: 5rem;
+    }
   }
 
   body {
@@ -90,11 +96,11 @@
     width: 100%;
     max-width: 72rem;
     margin-inline: auto;
-    padding-inline: 1.25rem;
+    padding-inline: max(1.25rem, env(safe-area-inset-left)) max(1.25rem, env(safe-area-inset-right));
   }
   @media (min-width: 768px) {
     .container-page {
-      padding-inline: 2rem;
+      padding-inline: max(2rem, env(safe-area-inset-left)) max(2rem, env(safe-area-inset-right));
     }
   }
 
@@ -118,10 +124,7 @@
     color: var(--muted);
     transition: border-color 0.2s ease, color 0.2s ease;
   }
-  .chip:hover {
-    border-color: var(--accent);
-    color: var(--text);
-  }
+
 
   .link-underline {
     background-image: linear-gradient(currentColor, currentColor);
@@ -130,9 +133,7 @@
     background-repeat: no-repeat;
     transition: background-size 0.3s ease;
   }
-  .link-underline:hover {
-    background-size: 100% 1px;
-  }
+
 
   .btn {
     display: inline-flex;
@@ -152,18 +153,13 @@
     background: var(--text);
     color: var(--bg);
   }
-  .btn-primary:hover {
-    background: var(--accent);
-    color: var(--accent-ink);
-  }
+
   .btn-ghost {
     border: 1px solid var(--line);
     color: var(--text);
     background: var(--surface);
   }
-  .btn-ghost:hover {
-    border-color: var(--text);
-  }
+
 
   .icon-btn {
     display: inline-grid;
@@ -176,15 +172,87 @@
     background: var(--surface);
     transition: color 0.2s ease, border-color 0.2s ease;
   }
-  .icon-btn:hover {
-    color: var(--text);
-    border-color: var(--text);
+  .icon-btn:active {
+    transform: scale(0.94);
   }
 
   .card {
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 1rem;
+  }
+
+  /* Hover styles only for devices that really hover, so taps on phones don't leave them stuck. */
+  @media (hover: hover) {
+    .chip:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+    .link-underline:hover {
+      background-size: 100% 1px;
+    }
+    .btn-primary:hover {
+      background: var(--accent);
+      color: var(--accent-ink);
+    }
+    .btn-ghost:hover {
+      border-color: var(--text);
+    }
+    .icon-btn:hover {
+      color: var(--text);
+      border-color: var(--text);
+    }
+  }
+  /* Touch feedback instead of hover. */
+  @media (hover: none) {
+    a.card {
+      transition: transform 0.15s ease, border-color 0.2s ease;
+    }
+    a.card:active {
+      transform: scale(0.985);
+      border-color: var(--faint);
+    }
+  }
+}
+
+@layer utilities {
+  /* Safe areas for notched phones (needs viewport-fit=cover). */
+  .safe-x {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  .safe-bottom {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+  .safe-fab {
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/*
+  Phone-only enhancements that need JS. html.js is set by the head script, so
+  without JS every bullet stays visible and the controls stay hidden.
+*/
+@media (max-width: 767.98px) {
+  .js [data-collapsed]:not([data-expanded]) > [data-extra] {
+    display: none;
+  }
+  .js [data-expand]:not([hidden]) {
+    display: inline-flex;
+  }
+  .js #to-top[data-show] {
+    display: grid;
+  }
+}
+@media (max-width: 639.98px) {
+  .js [data-carousel-controls] {
+    display: flex;
   }
 }
 
