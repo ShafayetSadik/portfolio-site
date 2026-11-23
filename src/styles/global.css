@@ -13,8 +13,8 @@
   --muted: #55585e;
   --faint: #6b6e74;
   --line: #e6e6e3;
-  --accent: #0b7a6c;
-  --accent-soft: #0b7a6c14;
+  --accent: #1a5fb4;
+  --accent-soft: #1a5fb414;
   --accent-ink: #ffffff;
   --grid: #17181a0a;
   color-scheme: light;
@@ -28,9 +28,9 @@
   --muted: #a3a6ab;
   --faint: #868a90;
   --line: #24272a;
-  --accent: #3dd4bd;
-  --accent-soft: #3dd4bd17;
-  --accent-ink: #062521;
+  --accent: #7fb2ff;
+  --accent-soft: #7fb2ff1a;
+  --accent-ink: #0b1a33;
   --grid: #ffffff08;
   color-scheme: dark;
 }
@@ -53,13 +53,13 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 4.5rem;
+    scroll-padding-top: 1.5rem;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
   }
   @media (min-width: 768px) {
     html {
-      scroll-padding-top: 5rem;
+      scroll-padding-top: 2rem;
     }
   }
 
@@ -94,7 +94,7 @@
 @layer components {
   .container-page {
     width: 100%;
-    max-width: 72rem;
+    max-width: 52rem;
     margin-inline: auto;
     padding-inline: max(1.25rem, env(safe-area-inset-left)) max(1.25rem, env(safe-area-inset-right));
   }
@@ -112,55 +112,6 @@
     color: var(--faint);
   }
 
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    border-radius: 999px;
-    padding: 0.25rem 0.7rem;
-    font-size: 0.8125rem;
-    line-height: 1.4;
-    color: var(--muted);
-    transition: border-color 0.2s ease, color 0.2s ease;
-  }
-
-
-  .link-underline {
-    background-image: linear-gradient(currentColor, currentColor);
-    background-size: 0% 1px;
-    background-position: 0 100%;
-    background-repeat: no-repeat;
-    transition: background-size 0.3s ease;
-  }
-
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    height: 2.75rem;
-    padding-inline: 1.15rem;
-    border-radius: 999px;
-    font-size: 0.9375rem;
-    font-weight: 500;
-    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-  }
-  .btn:active {
-    transform: scale(0.97);
-  }
-  .btn-primary {
-    background: var(--text);
-    color: var(--bg);
-  }
-
-  .btn-ghost {
-    border: 1px solid var(--line);
-    color: var(--text);
-    background: var(--surface);
-  }
-
-
   .icon-btn {
     display: inline-grid;
     place-items: center;
@@ -176,41 +127,47 @@
     transform: scale(0.94);
   }
 
-  .card {
-    background: var(--surface);
+  /* Classic academic links: colored, underline on hover/focus. */
+  .a-link {
+    color: var(--accent);
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: text-decoration-color 0.2s ease;
+  }
+  .a-link:focus-visible {
+    text-decoration-color: currentColor;
+  }
+
+  /* Publication / project thumbnail: an image, or a tile with the venue tag. */
+  .thumb {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: 1rem;
+    border-radius: 0.5rem;
+    background:
+      repeating-linear-gradient(135deg, var(--surface-2) 0 1px, transparent 1px 10px),
+      var(--surface);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.3;
+    padding: 0.25rem;
   }
 
   /* Hover styles only for devices that really hover, so taps on phones don't leave them stuck. */
   @media (hover: hover) {
-    .chip:hover {
-      border-color: var(--accent);
-      color: var(--text);
-    }
-    .link-underline:hover {
-      background-size: 100% 1px;
-    }
-    .btn-primary:hover {
-      background: var(--accent);
-      color: var(--accent-ink);
-    }
-    .btn-ghost:hover {
-      border-color: var(--text);
+    .a-link:hover {
+      text-decoration-color: currentColor;
     }
     .icon-btn:hover {
       color: var(--text);
       border-color: var(--text);
-    }
-  }
-  /* Touch feedback instead of hover. */
-  @media (hover: none) {
-    a.card {
-      transition: transform 0.15s ease, border-color 0.2s ease;
-    }
-    a.card:active {
-      transform: scale(0.985);
-      border-color: var(--faint);
     }
   }
 }
@@ -248,11 +205,6 @@
   }
   .js #to-top[data-show] {
     display: grid;
-  }
-}
-@media (max-width: 639.98px) {
-  .js [data-carousel-controls] {
-    display: flex;
   }
 }
 

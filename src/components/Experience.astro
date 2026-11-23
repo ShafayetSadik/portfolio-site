@@ -1,32 +1,36 @@
 ---
 import Section from './Section.astro';
-import { experience } from '../data/cv';
+import { experience, education } from '../data/cv';
 import { rich } from '../lib/rich';
 
 // On phones only the first few bullets show; a button reveals the rest (see ui.ts).
 const VISIBLE_ON_PHONE = 4;
+const { thesis } = education;
 ---
 
-<Section id="experience" index="02" title="Experience">
-  <ol class="relative" data-timeline>
-    <!-- Track + progress line; the progress line is drawn by motion.ts as you scroll. -->
-    <span aria-hidden="true" class="absolute bottom-2 left-[5px] top-2 w-px bg-line"></span>
-    <span aria-hidden="true" data-timeline-progress class="absolute bottom-2 left-[5px] top-2 w-px origin-top bg-accent"></span>
+<Section id="experience" title="Research & Experience">
+  <ol class="space-y-9">
+    <li data-reveal>
+      <div class="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+        <h3 class="font-semibold">
+          Undergraduate Thesis <span class="font-normal text-muted">· {education.school}</span>
+        </h3>
+        <p class="shrink-0 font-mono text-xs text-faint">B.Sc. in EEE</p>
+      </div>
+      <p class="mt-1.5 leading-snug">
+        <a href={thesis.url} target="_blank" rel="noopener" class="a-link italic">{thesis.title}</a>
+      </p>
+      <p class="mt-1.5 text-[0.9375rem] text-muted">
+        Supervisor:{' '}<span class="text-ink">{thesis.supervisor}</span>, {thesis.supervisorTitle}
+      </p>
+      <p class="mt-3 text-[0.9375rem] leading-relaxed text-muted">{thesis.summary}</p>
+    </li>
 
     {experience.map((job, i) => (
-      <li data-reveal class="relative pb-10 pl-7 last:pb-0 md:pb-14 md:pl-9">
-        <span
-          aria-hidden="true"
-          class:list={[
-            'absolute left-0 top-1.5 size-[11px] rounded-full border-2 border-bg',
-            job.current ? 'bg-accent ring-4 ring-accent-soft' : 'bg-faint',
-          ]}
-        ></span>
-
-        <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
-          <h3 class="text-lg font-semibold tracking-tight">
-            {job.role}
-            <span class="font-normal text-muted"> · {job.company}</span>
+      <li data-reveal>
+        <div class="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+          <h3 class="font-semibold">
+            {job.role} <span class="font-normal text-muted">· {job.company}</span>
           </h3>
           <p class="shrink-0 font-mono text-xs text-faint">{job.period}</p>
         </div>
@@ -35,13 +39,13 @@ const VISIBLE_ON_PHONE = 4;
           data-reveal-group
           data-collapsed={job.points.length > VISIBLE_ON_PHONE ? '' : undefined}
           id={`job-${i}-points`}
-          class="mt-4 space-y-2.5 text-[0.9375rem] leading-relaxed text-muted md:mt-5 md:space-y-3 md:text-[0.9675rem]"
+          class="mt-3 space-y-2 text-[0.9375rem] leading-relaxed text-muted"
         >
           {job.points.map((p, j) => (
             <li
               data-reveal-item
               data-extra={j >= VISIBLE_ON_PHONE ? '' : undefined}
-              class="relative pl-5 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-2.5 before:bg-faint"
+              class="relative pl-4 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-2 before:bg-faint"
             >
               <Fragment set:html={rich(p)} />
             </li>
@@ -53,7 +57,7 @@ const VISIBLE_ON_PHONE = 4;
             data-expand={`job-${i}-points`}
             aria-expanded="false"
             aria-controls={`job-${i}-points`}
-            class="mt-4 hidden items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2 text-sm font-medium active:scale-[0.97]"
+            class="mt-3 hidden min-h-11 items-center gap-1.5 text-sm font-medium text-accent active:opacity-70"
           >
             Show all {job.points.length}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>

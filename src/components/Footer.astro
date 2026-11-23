@@ -1,0 +1,29 @@
+---
+import Icon from './Icon.astro';
+import { profile } from '../data/cv';
+import { asset } from '../lib/rich';
+
+const built = new Date();
+const updated = built.toLocaleString('en-US', { month: 'long', year: 'numeric', timeZone: 'Asia/Dhaka' });
+---
+
+<footer id="contact" class="container-page safe-bottom mt-16 pb-10 md:mt-20">
+  <div data-reveal class="border-t border-line pt-6">
+    <p class="text-[0.9375rem]">
+      <span class="font-semibold">Contact:</span>{' '}
+      <a href={`mailto:${profile.email}`} class="a-link">{profile.email}</a>
+    </p>
+    <p class="mt-1 text-[0.9375rem] text-muted">
+      <a href={asset(profile.cvFile)} class="a-link" download>Download CV (PDF)</a>
+      <span class="px-1.5 text-faint" aria-hidden="true">·</span>References available on request.
+    </p>
+
+    <div class="mt-6 flex items-center justify-between gap-4 text-xs text-faint">
+      <p>© {built.getFullYear()} {profile.name} · Last updated {updated}</p>
+      <button type="button" data-theme-toggle class="icon-btn size-11 md:size-9" aria-label="Toggle color theme">
+        <Icon name="sun" size={16} class="hidden dark:block" />
+        <Icon name="moon" size={16} class="block dark:hidden" />
+      </button>
+    </div>
+  </div>
+</footer>

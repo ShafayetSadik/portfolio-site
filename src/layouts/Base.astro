@@ -3,8 +3,9 @@ import '../styles/global.css';
 import { profile } from '../data/cv';
 import { asset } from '../lib/rich';
 
-const title = `${profile.name} — ${profile.role}`;
-const description = profile.tagline;
+const title = `${profile.name} · Prospective PhD Student (Fall 2027)`;
+const description =
+  'EEE graduate (IUT) and Systems Engineer at ANTS Drone Hub working on autonomous UAV inspection, path planning and aerial perception. Seeking PhD positions starting Fall 2027.';
 const canonical = new URL(import.meta.env.BASE_URL, Astro.site).href;
 ---
 
@@ -49,7 +50,7 @@ const canonical = new URL(import.meta.env.BASE_URL, Astro.site).href;
       alumniOf: { '@type': 'CollegeOrUniversity', name: 'Islamic University of Technology' },
       email: `mailto:${profile.email}`,
       url: canonical,
-      sameAs: [profile.github, profile.linkedin],
+      sameAs: [profile.scholar, profile.orcid, profile.github, profile.linkedin].filter(Boolean),
     })} />
   </head>
   <body class="min-h-dvh">

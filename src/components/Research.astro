@@ -1,0 +1,20 @@
+---
+import Section from './Section.astro';
+import { research, focusAreas } from '../data/cv';
+---
+
+<Section id="research" title="Research">
+  <p data-reveal class="text-sm font-semibold">Interests</p>
+  <ul data-reveal-group class="mt-2 grid gap-x-8 gap-y-1.5 leading-relaxed sm:grid-cols-2">
+    {focusAreas.map((area) => (
+      <li data-reveal-item class="relative pl-4 before:absolute before:left-0 before:top-[0.7em] before:size-1.5 before:rounded-full before:bg-accent">
+        {area}
+      </li>
+    ))}
+  </ul>
+
+  <p data-reveal class="mt-6 text-sm font-semibold">Background</p>
+  <div data-reveal class="mt-2 space-y-3 text-[0.9375rem] leading-relaxed text-muted">
+    {research.statement.map((p) => <p>{p}</p>)}
+  </div>
+</Section>

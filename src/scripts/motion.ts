@@ -1,34 +1,23 @@
-import { animate, onScroll, splitText, stagger, createTimeline } from 'animejs';
+import { waapi, stagger } from 'animejs';
 
+// Subtle motion only: short fades with a small upward shift.
+// waapi.animate hands opacity + the CSS `translate` property to the browser's
+// animation engine, so the fades run off the main thread (no per-frame JS).
 const root = document.documentElement;
-const EASE = 'outExpo';
-// Phones get shorter, smaller, quicker motion so long scrolls don't feel busy.
+const EASE = 'outQuart';
 const phone = matchMedia('(max-width: 767.98px)').matches;
-const SHIFT = phone ? 12 : 22;
-const DUR = phone ? 650 : 900;
-const STEP = phone ? 40 : 70;
+const SHIFT = phone ? '0 8px' : '0 12px';
+const DUR = phone ? 500 : 650;
+const STEP = phone ? 35 : 50;
 
-function initHero() {
-  const name = document.querySelector<HTMLElement>('[data-hero-name]');
+function initIntro() {
   const items = document.querySelectorAll<HTMLElement>('[data-hero-item]');
   const portrait = document.querySelector<HTMLElement>('[data-hero-portrait]');
-
-  const tl = createTimeline({ defaults: { ease: EASE } });
-
-  if (name) {
-    const { words } = splitText(name, { words: { wrap: 'clip' } });
-    name.style.opacity = '1';
-    tl.add(words, { y: ['110%', '0%'], duration: 1100, delay: stagger(90) }, 0);
-  }
-  if (items.length) {
-    tl.add(items, { opacity: [0, 1], y: [14, 0], duration: 900, delay: stagger(110) }, 250);
-  }
-  if (portrait) {
-    tl.add(portrait, { opacity: [0, 1], scale: [0.96, 1], duration: 1200 }, 350);
-  }
+  if (items.length) waapi.animate(items, { opacity: [0, 1], translate: [SHIFT, '0 0'], duration: DUR, delay: stagger(70), ease: EASE });
+  if (portrait) waapi.animate(portrait, { opacity: [0, 1], duration: DUR + 200, delay: 100, ease: EASE });
 }
 
-// Runs `play` once the element's top passes 60px above the viewport bottom.
+// Runs `play` once the element's top passes a little above the viewport bottom.
 // The huge top margin makes anything *above* the viewport count as seen too,
 // so elements the visitor jumped past (anchor links, fast scrolls, reload
 // mid-page) still reveal. IntersectionObserver avoids layout reads on scroll.
@@ -49,71 +38,26 @@ function whenSeen(el: Element, play: () => void) {
   seen.observe(el);
 }
 
-// Fade/slide sections in as they come into view.
+// Fade sections in as they come into view.
 function initReveals() {
   document.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => {
-    whenSeen(el, () => animate(el, { opacity: [0, 1], y: [SHIFT, 0], duration: DUR, ease: EASE }));
+    whenSeen(el, () => waapi.animate(el, { opacity: [0, 1], translate: [SHIFT, '0 0'], duration: DUR, ease: EASE }));
   });
 
   document.querySelectorAll<HTMLElement>('[data-reveal-group]').forEach((group) => {
     const items = group.querySelectorAll<HTMLElement>('[data-reveal-item]');
     whenSeen(group, () =>
-      animate(items, { opacity: [0, 1], y: [SHIFT * 0.8, 0], duration: DUR - 100, delay: stagger(STEP), ease: EASE }),
+      waapi.animate(items, { opacity: [0, 1], translate: [SHIFT, '0 0'], duration: DUR, delay: stagger(STEP), ease: EASE }),
     );
   });
-}
-
-// Draw the experience line in step with scrolling.
-function initTimeline() {
-  const timeline = document.querySelector<HTMLElement>('[data-timeline]');
-  const progress = timeline?.querySelector<HTMLElement>('[data-timeline-progress]');
-  if (!timeline || !progress) return;
-  animate(progress, {
-    scaleY: [0, 1],
-    ease: 'linear',
-    autoplay: onScroll({ target: timeline, enter: 'center top', leave: 'center bottom', sync: 0.3 }),
-  });
-}
-
-// Count numbers up from zero when they come into view.
-function initCounters() {
-  document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
-    const end = Number(el.dataset.count);
-    const decimals = Number(el.dataset.decimals ?? 0);
-    const state = { v: 0 };
-    el.textContent = (0).toFixed(decimals);
-    whenSeen(el, () =>
-      animate(state, {
-        v: end,
-        duration: 1600,
-        ease: 'outQuart',
-        onUpdate: () => {
-          el.textContent = state.v.toFixed(decimals);
-        },
-      }),
-    );
-  });
-}
-
-// Grow the IELTS band bars.
-function initBars() {
-  const bars = document.querySelectorAll<HTMLElement>('[data-bar]');
-  if (!bars.length) return;
-  bars.forEach((b) => (b.style.transform = 'scaleX(0)'));
-  whenSeen(bars[0].closest('ul')!, () =>
-    animate(bars, { scaleX: [0, 1], duration: 1200, delay: stagger(90), ease: EASE }),
-  );
 }
 
 // The head script only sets .motion when the visitor allows motion.
 // .motion-ready cancels the CSS fallback reveal, so it is only set once setup succeeded.
 if (root.classList.contains('motion')) {
   try {
-    initHero();
+    initIntro();
     initReveals();
-    initTimeline();
-    initCounters();
-    initBars();
     root.classList.add('motion-ready');
   } catch (err) {
     root.classList.remove('motion');

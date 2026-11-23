@@ -1,53 +1,72 @@
 ---
+import { Image } from 'astro:assets';
 import Section from './Section.astro';
-import Icon from './Icon.astro';
-import { journalPapers, conferencePapers, underReview, dataset, type Publication } from '../data/cv';
+import { journalPapers, conferencePapers, underReview, dataset, profile, type Publication } from '../data/cv';
 import { rich } from '../lib/rich';
 
-const groups: { label: string; items: Publication[] }[] = [
-  { label: 'Journal', items: journalPapers },
-  { label: 'Conference', items: conferencePapers },
-  { label: 'Under review', items: underReview },
-];
+// Optional paper figures: put files in src/assets/papers/ and set `image` in cv.ts.
+const images = import.meta.glob<{ default: ImageMetadata }>('../assets/papers/*.{jpg,jpeg,png,webp,avif}');
+async function figure(p: Publication) {
+  const key = p.image ? `../assets/papers/${p.image}` : null;
+  return key && images[key] ? (await images[key]()).default : null;
+}
+
+const groups = await Promise.all(
+  [
+    { label: 'Journal', items: journalPapers },
+    { label: 'Conference', items: conferencePapers },
+    { label: 'Under review', items: underReview },
+  ].map(async (g) => ({ ...g, items: await Promise.all(g.items.map(async (p) => ({ ...p, figure: await figure(p) }))) })),
+);
+
+const linksFor = (p: Publication) =>
+  [
+    p.doi && { label: 'DOI', href: `https://doi.org/${p.doi}` },
+    p.pdf && { label: 'PDF', href: p.pdf },
+    p.dataset && { label: 'Dataset', href: p.dataset },
+    p.code && { label: 'Code', href: p.code },
+  ].filter(Boolean) as { label: string; href: string }[];
 ---
 
-<Section id="publications" index="04" title="Publications" intro="Machine learning and reinforcement learning for LTE handover optimization, built on real-world drive-test data.">
-  <div class="space-y-10 md:space-y-12">
+<Section
+  id="publications"
+  title="Publications"
+  link={profile.scholar ? { href: profile.scholar, label: 'Google Scholar' } : undefined}
+>
+  <div class="space-y-8">
     {groups.map((g) => (
       <div>
         <p data-reveal class="label">{g.label}</p>
-        <ol data-reveal-group class="mt-4 divide-y divide-line border-y border-line">
+        <ol data-reveal-group class="mt-3 space-y-5">
           {g.items.map((p) => (
-            <li data-reveal-item class="grid gap-1.5 py-5 sm:grid-cols-[4.5rem_1fr] sm:gap-6 sm:py-6">
-              <p class="font-mono text-xs text-faint sm:pt-1">{p.year}</p>
-              <div>
-                <h3 class="text-[1.0625rem] font-medium leading-snug tracking-tight">
+            <li data-reveal-item class="grid grid-cols-[4.5rem_1fr] gap-4 md:grid-cols-[8.5rem_1fr] md:gap-6">
+              <div class="thumb" aria-hidden={p.figure ? undefined : 'true'}>
+                {p.figure ? (
+                  <Image src={p.figure} alt="" widths={[144, 272]} sizes="(min-width: 768px) 8.5rem, 4.5rem" class="size-full object-cover" />
+                ) : (
+                  <span>{p.short}<br /><span class="text-faint">{p.year}</span></span>
+                )}
+              </div>
+              <div class="min-w-0">
+                <h3 class="font-semibold leading-snug">
                   {p.doi ? (
-                    <a
-                      href={`https://doi.org/${p.doi}`}
-                      target="_blank"
-                      rel="noopener"
-                      class="group/pub inline transition-colors hover:text-accent"
-                    >
-                      {p.title}
-                      <Icon name="arrow-up-right" size={14} class="ml-0.5 inline -translate-y-px text-faint transition-colors group-hover/pub:text-accent" />
-                    </a>
+                    <a href={`https://doi.org/${p.doi}`} target="_blank" rel="noopener" class="a-link">{p.title}</a>
                   ) : (
                     p.title
                   )}
                 </h3>
-                <p class="mt-2 text-sm text-muted"><Fragment set:html={rich(p.authors)} /></p>
-                <p class="mt-1 text-sm text-faint">
-                  <em class="text-muted">{p.venue}</em>{p.details && <>, {p.details}</>}
+                <p class="mt-1 text-[0.9375rem] leading-snug text-muted"><Fragment set:html={rich(p.authors)} /></p>
+                <p class="mt-1 text-[0.9375rem] leading-snug text-muted">
+                  <em>{p.venue}</em>{p.details && <>, {p.details}</>}{p.status ? '' : `, ${p.year}`}
                 </p>
-                <div class="mt-3 flex flex-wrap items-center gap-2">
-                  {p.doi && (
-                    <span class="rounded-md bg-surface-2 px-2 py-0.5 font-mono text-[0.7rem] text-muted">doi:{p.doi}</span>
-                  )}
+                <p class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
                   {p.status && (
-                    <span class="rounded-md bg-accent-soft px-2 py-0.5 font-mono text-[0.7rem] text-accent">{p.status}</span>
+                    <span class="rounded bg-accent-soft px-1.5 py-0.5 font-mono text-xs text-accent">{p.status}</span>
                   )}
-                </div>
+                  {linksFor(p).map((l) => (
+                    <a href={l.href} target="_blank" rel="noopener" class="a-link font-mono text-[0.8125rem]">[{l.label}]</a>
+                  ))}
+                </p>
               </div>
             </li>
           ))}
@@ -57,26 +76,18 @@ const groups: { label: string; items: Publication[] }[] = [
 
     <div>
       <p data-reveal class="label">Dataset</p>
-      <a
-        data-reveal
-        href={dataset.url}
-        target="_blank"
-        rel="noopener"
-        class="card group mt-4 flex gap-4 p-5 transition-colors hover:border-faint sm:gap-5 sm:p-6"
-      >
-        <span class="grid size-10 shrink-0 sm:size-11 place-items-center rounded-xl bg-accent-soft text-accent">
-          <Icon name="database" size={20} />
-        </span>
+      <div data-reveal class="mt-3 grid grid-cols-[4.5rem_1fr] gap-4 md:grid-cols-[8.5rem_1fr] md:gap-6">
+        <div class="thumb" aria-hidden="true"><span>DATA</span></div>
         <div class="min-w-0">
-          <h3 class="font-medium leading-snug tracking-tight transition-colors group-hover:text-accent">
-            {dataset.title}
+          <h3 class="font-semibold leading-snug">
+            <a href={dataset.url} target="_blank" rel="noopener" class="a-link">{dataset.title}</a>
           </h3>
-          <p class="mt-2 text-sm leading-relaxed text-muted">{dataset.description}</p>
-          <p class="mt-3 inline-flex items-center gap-1 font-mono text-xs text-faint">
-            {dataset.host} <Icon name="arrow-up-right" size={12} />
+          <p class="mt-1 text-[0.9375rem] leading-relaxed text-muted">{dataset.description}</p>
+          <p class="mt-1.5 text-sm">
+            <a href={dataset.url} target="_blank" rel="noopener" class="a-link font-mono text-[0.8125rem]">[{dataset.host}]</a>
           </p>
         </div>
-      </a>
+      </div>
     </div>
   </div>
 </Section>

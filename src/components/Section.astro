@@ -1,28 +1,23 @@
 ---
-// Shared section shell: mono index label in a left rail on desktop, content on the right.
-// On phones the index and title share one line to save vertical space.
+// Single-column academic section: heading with an optional link on the right.
 interface Props {
   id: string;
-  index: string;
   title: string;
-  intro?: string;
+  link?: { href: string; label: string };
 }
-const { id, index, title, intro } = Astro.props;
+const { id, title, link } = Astro.props;
 ---
 
-<section id={id} class="border-t border-line py-14 md:py-28" aria-labelledby={`${id}-title`}>
-  <div class="container-page grid gap-7 md:grid-cols-[13rem_1fr] md:gap-12">
-    <div data-reveal>
-      <div class="md:sticky md:top-24">
-        <div class="flex items-baseline gap-3 md:block">
-          <p class="label">{index}</p>
-          <h2 id={`${id}-title`} class="text-2xl font-semibold tracking-tight md:mt-2 md:text-[1.65rem]">{title}</h2>
-        </div>
-        {intro && <p class="mt-2 max-w-md text-sm leading-relaxed text-muted md:mt-3 md:max-w-xs">{intro}</p>}
-      </div>
-    </div>
-    <div class="min-w-0">
-      <slot />
-    </div>
+<section id={id} class="container-page pt-12 md:pt-16" aria-labelledby={`${id}-title`}>
+  <div data-reveal class="flex items-baseline justify-between gap-4 border-b border-line pb-2">
+    <h2 id={`${id}-title`} class="text-xl font-semibold tracking-tight md:text-[1.375rem]">{title}</h2>
+    {link && (
+      <a href={link.href} target="_blank" rel="noopener" class="a-link shrink-0 text-sm">
+        {link.label} <span aria-hidden="true">→</span>
+      </a>
+    )}
+  </div>
+  <div class="mt-5 md:mt-6">
+    <slot />
   </div>
 </section>

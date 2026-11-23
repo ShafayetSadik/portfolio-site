@@ -1,0 +1,101 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { profile } from '../data/cv';
+import { asset } from '../lib/rich';
+
+// Headshot is optional: put the file in src/assets/ and set profile.photo.
+const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/*.{jpg,jpeg,png,webp,avif}');
+const photoKey = profile.photo ? `../assets/${profile.photo}` : null;
+const photo = photoKey && photos[photoKey] ? (await photos[photoKey]()).default : null;
+
+// Profile links, separated by slashes in the classic academic style. Missing ones are skipped.
+const links = [
+  { label: 'Email', href: `mailto:${profile.email}` },
+  { label: 'CV', href: asset(profile.cvFile), download: true },
+  { label: 'Google Scholar', href: profile.scholar, external: true },
+  { label: 'ORCID', href: profile.orcid, external: true },
+  { label: 'GitHub', href: profile.github, external: true },
+  { label: 'LinkedIn', href: profile.linkedin, external: true },
+].filter((l): l is typeof l & { href: string } => !!l.href);
+---
+
+<header id="top" class="container-page relative pt-10 md:pt-20">
+  <button
+    type="button"
+    data-theme-toggle
+    class="icon-btn absolute right-5 top-6 size-11 md:right-8 md:top-8 md:size-10"
+    aria-label="Toggle color theme"
+  >
+    <Icon name="sun" class="hidden dark:block" />
+    <Icon name="moon" class="block dark:hidden" />
+  </button>
+
+  <div class="grid items-start gap-6 md:grid-cols-[1fr_11rem] md:gap-10">
+    <div data-hero-portrait class="md:order-2">
+      <div class="size-24 overflow-hidden rounded-full border border-line md:size-44">
+        {photo ? (
+          <Image
+            src={photo}
+            alt={`Portrait of ${profile.name}`}
+            widths={[192, 352]}
+            sizes="(min-width: 768px) 11rem, 6rem"
+            loading="eager"
+            fetchpriority="high"
+            class="size-full object-cover"
+          />
+        ) : (
+          <div class="portrait-placeholder grid size-full place-items-center">
+            <span class="font-mono text-2xl font-medium text-faint md:text-4xl">{profile.initials}</span>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <div class="md:order-1">
+      <h1 data-hero-item class="text-[2rem] font-semibold leading-tight tracking-tight md:text-[2.5rem]">
+        {profile.name}
+      </h1>
+      <p data-hero-item class="mt-1.5 text-[0.9375rem] text-muted md:text-base">{profile.position}</p>
+
+      <div data-hero-item class="mt-5 space-y-3 leading-relaxed">
+        {profile.bio.map((p) => <p>{p}</p>)}
+      </div>
+
+      <p
+        data-hero-item
+        class="mt-5 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-sm font-medium"
+      >
+        <span class="size-2 rounded-full bg-accent" aria-hidden="true"></span>
+        {profile.status}
+      </p>
+
+      <nav data-hero-item aria-label="Profiles" class="mt-5">
+        <ul class="flex flex-wrap items-center gap-y-1 text-[0.9375rem]">
+          {links.map((l, i) => (
+            <li class="flex items-center">
+              {i > 0 && <span class="px-2 text-faint" aria-hidden="true">/</span>}
+              <a
+                href={l.href}
+                class="a-link inline-flex min-h-11 items-center md:min-h-0"
+                {...(l.external ? { target: '_blank', rel: 'noopener' } : {})}
+                {...(l.download ? { download: '' } : {})}
+              >
+                {l.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<style>
+  .portrait-placeholder {
+    background:
+      radial-gradient(circle at 30% 20%, var(--accent-soft), transparent 60%),
+      repeating-linear-gradient(135deg, var(--surface-2) 0 1px, transparent 1px 10px),
+      var(--surface);
+  }
+</style>

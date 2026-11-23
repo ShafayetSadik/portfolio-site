@@ -7,6 +7,13 @@ export const profile = {
   initials: 'SS',
   role: 'Systems Engineer',
   company: 'ANTS Drone Hub',
+  position: 'B.Sc. in EEE, IUT (2025) · Systems Engineer, ANTS Drone Hub',
+  status: 'Seeking PhD positions starting Fall 2027.',
+  bio: [
+    'I am an Electrical and Electronic Engineering graduate from the Islamic University of Technology (IUT) and a Systems Engineer at ANTS Drone Hub, where I build autonomous drone systems, from custom path planners and Gazebo simulation to UAV photogrammetry and digital twin viewers.',
+    'My research interests are autonomous UAV inspection, path planning, UAV photogrammetry and 3D reconstruction, and machine learning for aerial perception.',
+    'As an undergraduate, I applied machine learning and reinforcement learning to LTE handover optimization using real-world drive-test data, which led to one journal paper, three IEEE conference papers and an open dataset.',
+  ],
   tagline:
     'Systems Engineer specializing in autonomous drones, embedded hardware, and multi-domain system integration.',
   summary:
@@ -17,9 +24,20 @@ export const profile = {
   github: 'https://github.com/ShafayetSadik',
   githubHandle: 'ShafayetSadik',
   linkedin: 'https://www.linkedin.com/in/shafayet-sadik-sowad-ab61a2226/',
+  scholar: 'https://scholar.google.com/citations?user=-nw0bygAAAAJ' as string | null,
+  // Paste the full ORCID URL here, e.g. 'https://orcid.org/0000-0000-0000-0000'.
+  orcid: null as string | null,
   cvFile: 'Shafayet_Sadik_Sowad_CV.pdf',
   // Drop a photo into src/assets/ and point this at it, e.g. 'headshot.jpg'.
   photo: null as string | null,
+};
+
+// Research section: a short statement plus the interests list from the CV.
+export const research = {
+  statement: [
+    'At ANTS Drone Hub I work across that pipeline: facade viewpoint generation and a custom path planner for drones, Gazebo simulation, aerial thermography with ML pipelines, and converting UAV photogrammetry into OGC 3D Tiles for a web-based digital twin viewer.',
+    'My undergraduate research gave me experience in collecting real-world data and applying machine learning and reinforcement learning (classifiers, Q-learning, DQN and contextual bandits) to decision problems in cellular networks.',
+  ],
 };
 
 export const focusAreas = [
@@ -28,13 +46,6 @@ export const focusAreas = [
   'UAV Photogrammetry & 3D Reconstruction',
   'Machine Learning for Aerial Perception',
   'Digital Twins',
-];
-
-export const highlights = [
-  { value: 4, decimals: 0, prefix: '', suffix: '', label: 'Peer-reviewed papers' },
-  { value: 100, decimals: 0, prefix: '~', suffix: ' km²', label: 'Mapped by drone' },
-  { value: 8, decimals: 0, prefix: '', suffix: '', label: 'Engineering projects' },
-  { value: 3.64, decimals: 2, prefix: '', suffix: '', label: 'CGPA · B.Sc. EEE' },
 ];
 
 export type Job = {
@@ -80,6 +91,8 @@ export type Project = {
   url: string;
   // Optional image file name in src/assets/projects/ (added later).
   image?: string;
+  // Featured projects get a full row; the rest go in the "Other projects" line.
+  featured?: boolean;
 };
 
 const repo = 'https://github.com/ShafayetSadik/Projects/tree/main/';
@@ -87,6 +100,7 @@ const repo = 'https://github.com/ShafayetSadik/Projects/tree/main/';
 export const projects: Project[] = [
   {
     title: 'Mars Rover',
+    featured: true,
     description:
       'Developed electrical systems and custom PCBs, integrating autonomous navigation and communication systems.',
     tags: ['PCB Design', 'Autonomy', 'Comms'],
@@ -94,6 +108,7 @@ export const projects: Project[] = [
   },
   {
     title: 'Autonomous SLAM Drone',
+    featured: true,
     description:
       'Built around a Pixhawk, Raspberry Pi, Intel RealSense D435 and an optical flow sensor.',
     tags: ['SLAM', 'Pixhawk', 'RealSense'],
@@ -101,6 +116,7 @@ export const projects: Project[] = [
   },
   {
     title: 'Underwater ROV Design',
+    featured: true,
     description:
       'Designed and integrated sensor, power, and communication systems, supporting reliable control and data transmission.',
     tags: ['Power', 'Sensors', 'Comms'],
@@ -147,10 +163,17 @@ export type Publication = {
   authors: string;
   title: string;
   venue: string;
+  // Short venue tag shown on the thumbnail tile until a figure is added.
+  short: string;
   details?: string;
   year: string;
   doi?: string;
   status?: string;
+  // Optional extras: figure in src/assets/papers/, and links.
+  image?: string;
+  pdf?: string;
+  code?: string;
+  dataset?: string;
 };
 
 // The author's own name is wrapped in ** so it renders bold.
@@ -159,9 +182,11 @@ export const journalPapers: Publication[] = [
     authors: 'M. M. S. Shafi, K. M. Istiaque, **S. S. Sowad**, and M. T. Kawser',
     title: 'Drive-Test-Based LTE Handover Dataset for Cellular Mobility Studies in Urban Bangladesh',
     venue: 'Data in Brief',
+    short: 'DIB',
     details: 'Art. no. 113220',
     year: '2026',
     doi: '10.1016/j.dib.2026.113220',
+    dataset: 'https://data.mendeley.com/datasets/n2pvmtyn2j/1',
   },
 ];
 
@@ -170,6 +195,7 @@ export const conferencePapers: Publication[] = [
     authors: 'K. M. Istiaque, **S. S. Sowad**, M. M. S. Shafi, and M. T. Kawser',
     title: 'Reducing Handover and Ping-Pong Events in LTE Networks via Q-Learning and Subtractive Clustering',
     venue: '2025 8th International Seminar on Research of Information Technology and Intelligent Systems (ISRITI)',
+    short: 'ISRITI',
     details: 'Yogyakarta, Indonesia',
     year: '2025',
     doi: '10.1109/ISRITI68345.2025.11393278',
@@ -178,6 +204,7 @@ export const conferencePapers: Publication[] = [
     authors: 'K. M. Istiaque, M. M. S. Shafi, **S. S. Sowad**, and M. T. Kawser',
     title: 'Adaptive Handover Optimization in LTE: Comparative Evaluation of Fuzzy Logic and DQN',
     venue: '2025 IEEE Asia Pacific Conference on Wireless and Mobile (APWiMob)',
+    short: 'APWiMob',
     details: 'Bali, Indonesia, pp. 198–204',
     year: '2025',
     doi: '10.1109/APWiMob67231.2025.11269172',
@@ -186,6 +213,7 @@ export const conferencePapers: Publication[] = [
     authors: 'M. M. S. Shafi, K. M. Istiaque, **S. S. Sowad**, and M. T. Kawser',
     title: 'Handover Optimization in LTE Networks Using Contextual Bandit Reinforcement Learning and Real-World Data',
     venue: '2025 International Conference on Computer Engineering, Network, and Intelligent Multimedia (CENIM)',
+    short: 'CENIM',
     details: 'Surabaya, Indonesia, pp. 249–254',
     year: '2025',
     doi: '10.1109/CENIM67940.2025.11326341',
@@ -198,6 +226,7 @@ export const underReview: Publication[] = [
     title:
       'Triplet-Loss-Driven Contrastive Autoencoding for Anomaly-Based Handover Prediction Using Drive-Test Data in Dynamic Cellular Environment',
     venue: 'Ad Hoc Networks (Elsevier)',
+    short: 'Ad Hoc Netw.',
     year: 'Submitted',
     status: 'Under review',
   },
@@ -247,6 +276,8 @@ export const education = {
     title:
       'Machine Learning-Driven Handover Optimization in LTE Networks: Quality Signal Indicator, Classifier-Based Prediction Analysis and Hybrid Q-Learning',
     url: 'https://github.com/ShafayetSadik/thesis',
+    supervisor: 'Dr. Mohammad Tawhid Kawser',
+    supervisorTitle: 'Professor, Department of EEE, IUT',
     summary:
       'Conducted a drive-test-based study of LTE networks in Dhaka to build a real-world dataset focused on signal quality indicators for handover analysis. Developed machine learning and hybrid Q-learning frameworks to predict and optimize handover decisions.',
   },
@@ -277,14 +308,4 @@ export const awards = [
   { result: '6th Place · ABEX Task Winner', team: 'Project Altair', event: 'International Rover Challenge 2024', place: 'Coimbatore, India' },
   { result: 'Top 12 Finalist', team: 'Project Aero', event: 'International Space Drone Challenge 2024', place: 'India' },
   { result: '18th Place', team: 'Project Altair', event: 'University Rover Challenge 2025', place: 'USA' },
-];
-
-export const nav = [
-  { id: 'about', label: 'About' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'publications', label: 'Publications' },
-  { id: 'skills', label: 'Skills' },
-  { id: 'education', label: 'Education' },
-  { id: 'contact', label: 'Contact' },
 ];
